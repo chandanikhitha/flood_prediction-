@@ -1,26 +1,37 @@
 from flask import Flask, render_template, request
 import pickle
+import os
 
 app = Flask(__name__)
 
-# Load model
-model = pickle.load(open("model.pkl", "rb"))
+# ✅ Safe model load
+model = None
+if os.path.exists("model.pkl"):
+    model = pickle.load(open("model.pkl", "rb"))
 
-@app.route('/')
+# ✅ Home page
+@app.route("/")
 def home():
     return render_template("index.html")
 
+# ✅ Prediction route
 @app.route('/predict', methods=['POST'])
 def predict():
-    rainfall = float(request.form['rainfall'])
-    temperature = float(request.form['temperature'])
+    if model is None:
+        return "Model not loaded!"
 
-    prediction = model.predict([[rainfall, temperature]])
+    try:
+        rainfall = float(request.form['rainfall'])
+        temperature = float(request.form['temperature'])
 
-    return render_template("result.html", output=round(prediction[0], 2))
+        prediction = model.predict([[rainfall, temperature]])
 
-import os
+        return render_template("index.html", prediction_text=f"Prediction: {prediction[0]}")
 
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+# ✅ Run app (local testing)
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(debug=True)
     
