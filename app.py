@@ -24,9 +24,9 @@ def predict():
         rainfall = float(request.form['rainfall'])
         temperature = float(request.form['temperature'])
 
-        prediction = model.predict([[rainfall, temperature]])
+        prediction = model.predict([[rainfall, temperature]])[0]
 
-        return render_template("index.html", prediction_text=f"Prediction: {prediction[0]}")
+        return render_template("index.html", prediction_text=f"Prediction: {prediction}")
 
     except Exception as e:
         return f"Error: {str(e)}"
