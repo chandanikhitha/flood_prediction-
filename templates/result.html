@@ -1,0 +1,7 @@
+<h3>Predicted Water Level: {{ output }}</h3>
+
+{% if output > 80 %}
+    <h3 style="color:red;">High Flood Risk ⚠️</h3>
+{% else %}
+    <h3 style="color:green;">Safe ✅</h3>
+{% endif %}
